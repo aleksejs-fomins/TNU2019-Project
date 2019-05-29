@@ -93,7 +93,8 @@ def read_lick(folderpath):
     # Process trials file
     ################################
     TIMESCALE_TRACES = 0.001 # ms
-    trials_file = os.path.join(folderpath, os.path.basename(folderpath)+".mat")
+    trials_file = os.path.join(folderpath, os.path.basename(os.path.dirname(folderpath))+".mat")
+    #print(trials_file)
     lick_trials = loadmat(trials_file)
 
     # NOTE: lick_trials['licks']['lick_vector'] is just a repeat from above lick_traces file
@@ -132,7 +133,7 @@ def read_whisk(folderpath):
     # else:
     #     raise ValueError("Unexpected number of paw timesteps", nTimesWhisk)
         
-    with open(os.path.join(folderpath, os.path.basename(folderpath)+'.txt')) as fLog:
+    with open(os.path.join(folderpath, os.path.basename(os.path.dirname(folderpath))+'.txt')) as fLog:
         firstTouch = np.array([line.split('\t')[1] for line in fLog.readlines()[1:]], dtype=float)
         
     # return {
