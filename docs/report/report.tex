@@ -3,6 +3,10 @@
 \usepackage[margin=0.7in]{geometry}     %% Margins
 \usepackage{parskip}                    %% Tiny gaps after enter
 \setlength\parindent{0pt}               %% Noindent for entire file
+\usepackage[backend=biber, url=false]{biblatex}    %% Bibliography
+%\bibliographystyle{ieeetr}
+\usepackage{hyperref}
+\addbibresource{refs.bib}
 
 
 %opening
@@ -18,19 +22,19 @@
 \maketitle
 
 \section{Introduction}
-Mesoscopic whole-brain imaging is a large field. A wide variety of measurement techniques, such as fMRI [cite], EEG [cite] and wide-field optical recordings [cite] are used to record functions of neuronal signals averaged over large neuronal populations. An important question is the capacity of recorded mesoscopic signals to explain observables external to the brain, such as sensory input, behaviour and learning, and vice versa.
+Mesoscopic whole-brain imaging is a large field. A wide variety of measurement techniques, such as fMRI \cite{ogawa_brain_1990, belliveau_functional_1990, deyoe_functional_1994, buxton_modeling_2004, kiebel_dynamic_2008}, EEG \cite{wright_dynamics_1996, baillet_bayesian_1997, gross_dynamic_2001, kececi_quantitative_2008} and wide-field optical recordings \cite{gilad_behavioral_2018, silasi_intact_2016, holtmaat_long-term_2009, dombeck_imaging_2007} are used to record functions of neuronal signals averaged over large neuronal populations. An important question is the capacity of recorded mesoscopic signals to explain observables external to the brain, such as sensory input, behaviour and learning, and vice versa.
 
 An ideal latent variable model would be capable of accurately predicting the future values of mesoscopic activity and external observables based their past values. Given current state of the art data, the construction of a fully self-consistent mesoscopic model of a brain or its part is unlikely because, among others, such a model would struggle to account for a) heterogeneity of a neuronal population b) specificity of its response c) inputs from unobserved neuronal populations and external stimuli. However, it is not unreasonable to assume that brain activity can be decomposed into a spatio-temporal basis of increasing detail, allowing to have a progressively more accurate account external observables.
 
-An interesting latent variable of mesoscopic activity is the so-called Functional Connectivity. Loosely, it can be defined as the capacity of the value of one variable to be predictive of the value of another variable at a later time. FC is designed to indicate potential causal relationships between variables, however, far greater knowledge of the system is required to guarantee causality as the only possible explanation of FC [Lizier book]. While it is frequently impossible to unambiguously estimate FC [Lizier book], standardized metrics of FC have been demonstrated to be predictive of decision making \cite{lizier2010} [cite], pathology [cite] and learning [cite]. Among others, the following metrics for FC have been proposed: correlation [cite], coherence [cite], Granger Causality [cite], KL-Divergence [cite], Transfer Entropy [cite], Topological Causality [cite].
+An interesting latent variable of mesoscopic activity is the so-called Functional Connectivity \cite{friston_functional_2011, hutchison_dynamic_2013}. Loosely, it can be defined as the capacity of the value of one variable to be predictive of the value of another variable at a later time. FC is designed to indicate potential causal relationships between variables, however, far greater knowledge of the system is required to guarantee causality as the only possible explanation of FC \cite{wibral_directed_2014}. While it is frequently impossible to unambiguously estimate FC \cite{wibral_directed_2014}, standardized metrics of FC have been demonstrated to be predictive of working memory \cite{greicius_functional_2003, esposito_independent_2006}, daydreaming \cite{kucyi_dynamic_2014}, decision making \cite{lizier_multivariate_2010}, pathology \cite{sakoglu_classification_2009} and learning \cite{bassett_dynamic_2011}. Among others, the following metrics for FC have been proposed: correlation \cite{greicius_persistent_2008, thompson_short-time_2012, viviani_resting_2011}, coherence \cite{pascual-marqui_isolated_2014}, Granger Causality \cite{zadeh_extension_1950, amblard_relation_2012, valdes-sosa_effective_2011, seth_granger_2015}, KL-Divergence \cite{amari_information_2001, nakahara_information-geometric_2002}, Transfer Entropy \cite{wibral_directed_2014, vicente_transfer_2010, nigam_rich-club_2016, lizier_differentiating_2010, lizier_multivariate_2010, ito_extending_2011, schreiber_measuring_2000}, Topological Causality \cite{harnack_topological_2017}.
 
 FC is a direct measure of the information propagation in the system. It can be used to infer the direction of information propagation, as well as the sinks and sources of information in a given dynamical system. Further, unlike anatomical connectivity, FC need not be constant even on the short time scales. A fastly changing FC can indicate at multipartite nature of the underlying nodes and at distinct rules which determine whether a given connection is active in a given context.
 
-Our ultimate goal is to compare the performance of model-free and model-based estimators of FC on simulated data, as well as the real data of whole-brain calcium imaging. This report will present current progress in application of model-based techniques, namely MAR and DCM. In the following publication, we intend to finish the DCM analysis started in this work, and compare it to model-free analysis using correlation, MI and TE.
+Our ultimate goal is to compare the performance of model-free and model-based estimators of FC on simulated data, as well as the real data of whole-brain calcium imaging. This report will present current progress in application of model-based techniques, namely MAR \cite{penny_bayesian_2002} and DCM \cite{stephan_dynamic_2007, friston_functional_2011, frassle_regression_2017, jung_dynamic_2019}. In the following publication, we intend to finish the DCM analysis started in this work, and compare it to model-free analysis using correlation, MI and TE.
 
 
 \section{Data}
-In this study we use the recent data gathered using a novel multifiber implant technology [Yaro]. The advantage of this technique compared to previous approaches is the ability to simultaneously image multiple cortical and subcortical areas with high selectivity, while benefiting from high temporal resolution of calcium indicators. In particular, fluorescence signals from GCaMP6f-expressing mice were recorded at 20Hz using chronic implants of multifiber arrays of 12 to 48 channels. During a period of 12-18 days mice would perform a texture discrimination task for an average of 400 trials. Each trial lasts 10s. During each trial a mouse must use tactile information to discriminate between two randomly presented textures and report by licking or not licking at a provided water port. Correct classification is water-rewarded and wrong is punished by white noise. Performance during each trial is classified into 4 categories (Hit, Miss, False Alarm, Correct Rejection) based on correct vs actual outcome. Behavioural and external variables, namely paw movement, lick rate, whisking angle, distance to texture, start and finish auditory cues, time to first touch, first lick and reward are also recorded. For the purpose of this study, we have resampled the behavioural and external variables to match the neuronal sampling frequency. Also, single time step data, such as reward time, have been convolved with a log-exponential distribution to mimic a realistic time-response.
+In this study we use the recent data gathered using a novel multifiber implant technology \cite{sych_high-density_2019}. The advantage of this technique compared to previous approaches is the ability to simultaneously image multiple cortical and subcortical areas with high selectivity, while benefiting from high temporal resolution of calcium indicators. In particular, fluorescence signals from GCaMP6f-expressing mice were recorded at 20Hz using chronic implants of multifiber arrays of 12 to 48 channels. During a period of 12-18 days mice would perform a texture discrimination task for an average of 400 trials. Each trial lasts 10s. During each trial a mouse must use tactile information to discriminate between two randomly presented textures and report by licking or not licking at a provided water port. Correct classification is water-rewarded and wrong is punished by white noise. Performance during each trial is classified into 4 categories (Hit, Miss, False Alarm, Correct Rejection) based on correct vs actual outcome. Behavioural and external variables, namely paw movement, lick rate, whisking angle, distance to texture, start and finish auditory cues, time to first touch, first lick and reward are also recorded. For the purpose of this study, we have resampled the behavioural and external variables to match the neuronal sampling frequency. Also, single time step data, such as reward time, have been convolved with a log-exponential distribution to mimic a realistic time-response.
 
 \section{Preliminary Exploratory Analysis}
 We believe that it is advantageous to get familiar with the data using simple well-established metrics prior to using sophisticated model-based explanations, mainly to check whether the data is consistent with the assumptions of the model. Firstly, we expect the measured neuronal signal to be autocorrelated, since the GCaMP6f timescale of ~500ms is larger than the sampling timestep of 50ms. Secondly, we expect the signals from different brain areas to be cross-correlated. Since the slowly-changing components of the signals can be linearised to a reasonable accuracy within the range of a few time steps, a zero cross-correlation would indicate that any coupling between channels is purely nonlinear and very weak compared to the signal magnitude.
@@ -45,7 +49,7 @@ We have considered the following form of an autoregressive process
 \begin{equation}
   X_i(t) = \sum_{j=1}^p \sum_{k=1}^{N_X}   A^j_{ik} X_k(t-j) + \sum_{k=1}^{N_U} B_{ik} U_k(t-1) + \epsilon_i 
 \end{equation}
-where $X$ is the observed calcium signal, $U$ is the external input, $p$ is the maximal order of the MAR model, $A$ and $B$ are the unknown functional connectivity tensors. In this study we have investigated 3 different implementations of the above model: analytic unconstrained solution, numeric constrained and regularized solution and a model inversion framework from [Penny2006]. in [Table 1] we present comparison between features available in each implementation. Note that absence of most of the features in the below table is not a fundamental constraint, but rather an attempt to save time.
+where $X$ is the observed calcium signal, $U$ is the external input, $p$ is the maximal order of the MAR model, $A$ and $B$ are the unknown functional connectivity tensors. In this study we have investigated 3 different implementations of the above model: analytic unconstrained solution, numeric constrained and regularized solution and a model inversion framework from \cite{penny_bayesian_2002}. in [Table 1] we present comparison between features available in each implementation. Note that absence of most of the features in the below table is not a fundamental constraint, but rather an attempt to save time.
 
 \begin{table}[h!]
 \centering
@@ -68,7 +72,7 @@ From our experiments we draw the following conclusions
  \item Behaviour correlates ???
  \item The loss function improves roughly by 2\% per order up to order 3, then by 1\% up to order 7. AIC and BIC are not significant compared to the original loss function for orders up to 10
  \item Increasing the $L_1$ regularization constant results in a highly sparse matrix with a few off-diagonal entries. Intrestingly, under this regularization, some channels have much stronger off-diagonal components than diagonal components, although this could be an effect of local minima of the optimization procedure.
- \item The Bayesian information criteria computed using the [Penny2006] model indicate that the group Bayes Factor drops dramatically with increasing model order, which is in sharp contrast with the AIC and BIC criteria. 
+ \item The Bayesian information criteria computed using the Penny\cite{penny_bayesian_2002} model indicate that the group Bayes Factor drops dramatically with increasing model order, which is in sharp contrast with the AIC and BIC criteria. 
 
 \end{itemize}
 
@@ -79,21 +83,21 @@ From our experiments we draw the following conclusions
 
 
 \section{DCM Model}
-While I have not found sufficient time to complete this analysis within the given time frame, it is intended to do this analysis for the following publication. For this purpose, I outline the steps necessary for the analysis. In a recent paper [Park2019] Jung et al. have proposed a DCM paradigm to model calcium imaging data. We intend to use their result as a starting point.
+While I have not found sufficient time to complete this analysis within the given time frame, it is intended to do this analysis for the following publication. For this purpose, I outline the steps necessary for the analysis. In a recent paper \cite{jung_dynamic_2019} Jung et al. have proposed a DCM paradigm to model calcium imaging data. We intend to use their result as a starting point.
 
 \subsection{Latent variable model}
-DCM models make use of two sets of equations - the latent variable equation, which self-consistently models the dynamics of latent variables and external inputs, as well as the forwards model, which computes . Typically, DCM models make use of the neuronal state equation [Friston2007]
+DCM models make use of two sets of equations - the latent variable equation, which self-consistently models the dynamics of latent variables and external inputs, as well as the forwards model, which computes . Typically, DCM models make use of the neuronal state equation \cite{stephan_dynamic_2007}
 %%
 \begin{equation}
    \vec{x}(t+1) = A\vec{x}(t) + B \vec{x}(t) \vec{u}(t) + C\vec{u}(t) + \nu, \;\;\;\;\; \nu \sim \mathcal{N}(\vec{\mu}, \Sigma)
 \end{equation}
 %%
-Instead [Park2019] follow the convolution-based model based on the work of [Moran2013] . The membrane potential of a neuronal population is given by a convolution of a non-linear function of internal and external input with a suitable kernel
+Instead \cite{jung_dynamic_2019} follow the convolution-based model based on the work of Moran et al \cite{moran_neural_2013} . The membrane potential of a neuronal population is given by a convolution of a non-linear function of internal and external input with a suitable kernel
 %%
 \begin{equation}
    V_i(t) = h_{i}(t) \otimes (Inp_i(t) + \Sigma_j \gamma_{ij} \sigma_j(V_i - T_i))
 \end{equation}
-%%
+%%  
 where $i$ denotes the index of a neuronal population, $Inp_i(t)$ is the external input to each neuron, $\gamma_{ij}$ are the connection weights,  is the nonlinear activation function, $T_i$ is the firing threshold, the non-linear transfer function is given by
 %%
 \begin{equation}
@@ -116,7 +120,7 @@ Using differentiation, the above equation can be rewritten in the form of an ODE
 where $I$ is the membrane current.
 
 \subsection{Forwards model}
-[Park2019] use the forwards model designed by [Rahmati2016] to estimate the calcium signal from the membrane potential.
+Jung et al. \cite{jung_dynamic_2019} use the forwards model designed by Rahmati et al\cite{rahmati_inferring_2016} to estimate the calcium signal from the membrane potential.
 %%
 \begin{equation}
    \frac{d}{dt}[Ca^{2+}] = K_{ca} g_{ca} \sigma(V_i - T_i) - \frac{[Ca^{2+}] - [Ca^{2+}]_{base}}{\tau_{ca}}
@@ -184,5 +188,7 @@ $\tilde{F}$ is can be computed using the following algorithm
 	ME	&	Model Evidence\\
 	TE	&	Transfer Entropy
 \end{tabular}
+
+\printbibliography
 
 \end{document}
