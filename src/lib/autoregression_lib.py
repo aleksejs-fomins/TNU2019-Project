@@ -5,8 +5,6 @@ Algorithm-AR(p)-Multivariate-WithTrials
 
 x(t) = sum_i A(i)x(t-i) + B u(t)
 
-
-
 '''
 
 # Construct stacked past measurements
